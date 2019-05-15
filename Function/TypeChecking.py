@@ -3,7 +3,35 @@
 
 import re
 
+
 class StrTypeChecking(object):
+
+    @staticmethod
+    def is_str(check_data):
+        return isinstance(check_data, str) or isinstance(check_data, unicode)
+
+    @staticmethod
+    def in_length_range(check_str, min_num=None, max_num=None):
+        """是否符合指定的长度"""
+        # ---------------------------------------------
+        if min_num:
+            if len(check_str) < min_num:
+                return False
+        # ---------------------------------------------
+        if max_num:
+            if len(check_str) > max_num:
+                return False
+        # ---------------------------------------------
+        return True
+
+    @staticmethod
+    def is_match_compile(check_str, compile_str):
+        """是否符合正则表达式"""
+        if re.compile(compile_str).match(check_str):
+            return True
+        else:
+            return False
+    # -----------------------------------------------------------------------------
 
     @staticmethod
     def is_str_float(check_str, decimal_number=None, ignore_0_head=False):
@@ -100,44 +128,89 @@ class TypeCheckingTxt(TypeChecking):
     """TXT 类型检查"""
 
     @staticmethod
+    def _in_and_not_none():
+        """存在并且不是none"""
+
+    @staticmethod
+    def is_element_match_type_inf(element_str, type_info):
+        """元素是否和类型信息匹配"""
+
+        if 'ignore_0_head' not in type_info:
+            ignore_0_head = False
+        else:
+            ignore_0_head = type_info['ignore_0_head']
+
+        # 遍历检查条件字典
+        # -----------------------------------------------
+        # FIXME 这边能不能写的方便一些
+        type_str = type_info.setdefault('type', None)
+        if type_str:
+            # 检查类型
+            if type_str == 'str_int':
+                if not StrTypeChecking.is_str_int(element_str, ignore_0_head=ignore_0_head):
+                    return False
+            elif type_info == 'str_number':
+                if not StrTypeChecking.is_str_number(element_str, ignore_0_head=ignore_0_head):
+                    return False
+            elif type_info == 'str_float':
+                if not StrTypeChecking.is_str_float(element_str, ignore_0_head=ignore_0_head):
+                    return False
+        # -----------------------------------------------
+
+        # -----------------------------------------------
+        # -----------------------------------------------
+        # -----------------------------------------------
+        # -----------------------------------------------
+        # -----------------------------------------------
+        # -----------------------------------------------
+
+        return True
+
+
+    @staticmethod
     def check_item(check_str, compile_str):
         """检查每一行数据"""
 
-        # 使用正则表达式进行匹配
+        type_info = [
+            {'type': 'str_int', 'min_value': None, 'max_value': None, 'ignore_0_head': None, 'compile_str': None},
+            {'type': 'str_int', 'min_value': None, 'max_value': None, 'ignore_0_head': None, 'compile_str': None},
+            {'type': 'str_int', 'min_value': None, 'max_value': None, 'ignore_0_head': None, 'compile_str': None},
+            {'type': 'str_int', 'min_value': None, 'max_value': None, 'ignore_0_head': None, 'compile_str': None},
+            {'type': 'str_int', 'min_value': None, 'max_value': None, 'ignore_0_head': None, 'compile_str': None},
+            {'type': 'str_int', 'min_value': None, 'max_value': None, 'ignore_0_head': None, 'compile_str': None},
+            {'type': 'str_int', 'min_value': None, 'max_value': None, 'ignore_0_head': None, 'compile_str': None},
+            {'type': 'str_int', 'min_value': None, 'max_value': None, 'ignore_0_head': None, 'compile_str': None},
+            {'type': 'str_int', 'min_value': None, 'max_value': None, 'ignore_0_head': None, 'compile_str': None},
+                     ]
 
-        # 开始符合和截止符号 ^ $
-
-        # 使用指定分隔符(,)间隔的行(3)
-        # ^(\d{3},){2}\d{3}$
-        # 不指定分割符间隔的行(3)
-        # ^(\d{3}.){3}$
-
-        # 使用指定序列分割符间隔的行
-        # ^(\d{3}[,+_， ]){2}\d{3}$
-
-        # 指定分割符，有确定的元素个数
-        # ^(.*,){2}.*$  ((?![,]).)
-
-        # 按照某分隔符进行分割
-        a = check_str.split(compile_str)
-        # 每一个元素进行一次类型匹配
+        for index, each_element in enumerate(check_str.split(',')):
+            print(each_element)
+            # 检查每一个元素
+            if not TypeCheckingTxt.is_element_match_type_inf(each_element, type_info[index]):
+                print('false')
+                return False
+            # else:
+            #     print('true')
+        # return True
 
 
-        print(len(a))
-
-        print(a)
-
-        pass
-
+    @staticmethod
+    def main():
+        """主函数"""
+        with open(r'E:\Algorithm\TypeChecking\AuxData\test.txt', 'r') as txt_file:
+            for each in txt_file:
+                print(each)
+                print(TypeCheckingTxt.check_item(each, 123))
 
 
 if __name__ == '__main__':
     # TypeCheckingTxt.check_item('1,2,3,4,5,8,6,7', ',')
 
-    # print(StrTypeChecking.is_str_float('1.2', ignore_0_head=False))
-    print(StrTypeChecking.in_range('01.2', ignore_0_head=True, min_value=-12, max_value=1.9))
+    # print(StrTypeChecking.in_range('01.2', ignore_0_head=True, min_value=-12, max_value=1.9))
 
-    pass
+    TypeCheckingTxt.main()
+
+    # print(StrTypeChecking.is_match_compile('1,28,3,4', '^(\d{1,2}.){3}4$'))
 
 
 
